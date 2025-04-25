@@ -32,17 +32,14 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Reservation reservation = reservations.get(position);
 
-        // You might need to fetch the Bike object using the bikeId to get the bike type
-        // For simplicity, we'll assume the bike type is stored in the Reservation object or can be retrieved.
-        // If not, you'll need to modify your Reservation class or perform a database join.
-        holder.textViewBikeType.setText("Bike ID: " + reservation.getBikeId()); // Placeholder
+        holder.textViewBikeId.setText("Bike ID: " + reservation.getBikeId()); // Keeping Bike ID for now
 
         holder.textViewStationName.setText("Station: " + reservation.getStationName());
 
         // Format the reservation start time
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault());
-        String formattedDate = sdf.format(new Date(reservation.getReservationStartTime()));
-        holder.textViewReservationTime.setText("Reserved at: " + formattedDate);
+        String formattedStartTime = sdf.format(new Date(reservation.getReservationStartTime()));
+        holder.textViewReservationTime.setText("Reserved at: " + formattedStartTime);
     }
 
     @Override
@@ -51,15 +48,17 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewBikeType;
+        TextView textViewBikeId;
         TextView textViewStationName;
         TextView textViewReservationTime;
+        TextView textViewReturnTime; // Added for return time
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewBikeType = itemView.findViewById(R.id.textViewBikeType);
+            textViewBikeId = itemView.findViewById(R.id.textViewBikeId);
             textViewStationName = itemView.findViewById(R.id.textViewStationName);
             textViewReservationTime = itemView.findViewById(R.id.textViewReservationTime);
+            textViewReturnTime = itemView.findViewById(R.id.textViewReturnTime); // Find the new TextView in item_reservation.xml
         }
     }
 }
