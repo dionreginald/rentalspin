@@ -7,83 +7,67 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class StationBikeAdapter extends RecyclerView.Adapter<StationBikeAdapter.ViewHolder> {
 
-    private List<Bike> bikes;
     private Context context;
-    private DatabaseHelper dbHelper;
+    private List<Bike> bikes;
     private OnBikeReservedListener onBikeReservedListener;
 
-    public interface OnBikeReservedListener {
-        void onBikeReserved(String bikeId);
+    public StationBikeAdapter(Context context, List<Bike> bikes) {
+        this.context = context;
+        this.bikes = bikes;
     }
 
     public void setOnBikeReservedListener(OnBikeReservedListener listener) {
         this.onBikeReservedListener = listener;
     }
 
-    public StationBikeAdapter(Context context, List<Bike> bikes) {
-        this.context = context;
-        this.bikes = bikes;
-        this.dbHelper = new DatabaseHelper(context);
-    }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_station_bike, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_station_bike, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Bike bike = bikes.get(position);
-        holder.textViewBikeType.setText(bike.getType());
+        holder.textViewBikeName.setText(bike.getName());
         holder.imageViewBike.setImageResource(bike.getImageResourceId());
 
         if (bike.isReserved()) {
-            holder.buttonReserveBike.setEnabled(false);
             holder.buttonReserveBike.setText("Reserved");
+            holder.buttonReserveBike.setEnabled(false);
         } else {
-            holder.buttonReserveBike.setEnabled(true);
             holder.buttonReserveBike.setText("Reserve");
+            holder.buttonReserveBike.setEnabled(true);
         }
 
         holder.buttonReserveBike.setOnClickListener(v -> {
-            if (!bike.isReserved()) { // Only allow reservation if the bike is not already reserved
-                String bikeId = bike.getId();
-                String bikeType = bike.getType();
-                String stationName = bike.getStationName();
-                String userId = "user123"; // Replace with actual user ID retrieval
-
-                long reservationStartTime = System.currentTimeMillis();
-                long reservationEndTime = 0;
-
-                Reservation reservation = new Reservation(userId, bikeId, reservationStartTime, reservationEndTime, stationName);
-                long reservationId = dbHelper.addReservation(reservation);
-
-                if (reservationId != -1) {
-                    Toast.makeText(v.getContext(), bikeType + " reserved successfully! Reservation ID: " + reservationId, Toast.LENGTH_SHORT).show();
-                    if (onBikeReservedListener != null) {
-                        onBikeReservedListener.onBikeReserved(bikeId);
-                        // Immediately update the UI to reflect the reservation
-                        bike.setReserved(true);
-                        notifyItemChanged(position); // Only update the current item
-                    }
-                } else {
-                    Toast.makeText(v.getContext(), "Failed to reserve " + bikeType, Toast.LENGTH_SHORT).show();
+            if (!bike.isReserved()) {
+                // Simulate reservation (you'll replace this with database logic)
+                if (onBikeReservedListener != null) {
+                    onBikeReservedListener.onBikeReserved(bike); // Pass the Bike object
+                    bike.setReserved(true);
+                    updateReservationUI(holder, bike);
                 }
-            } else {
-                Toast.makeText(v.getContext(), bike.getType() + " is already reserved.", Toast.LENGTH_SHORT).show();
+                // For now, just update the UI here
             }
         });
+    }
+
+    private void updateReservationUI(ViewHolder holder, Bike bike) {
+        if (bike.isReserved()) {
+            holder.buttonReserveBike.setText("Reserved");
+            holder.buttonReserveBike.setEnabled(false);
+        } else {
+            holder.buttonReserveBike.setText("Reserve");
+            holder.buttonReserveBike.setEnabled(true);
+        }
     }
 
     @Override
@@ -93,14 +77,18 @@ public class StationBikeAdapter extends RecyclerView.Adapter<StationBikeAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageViewBike;
-        TextView textViewBikeType;
+        TextView textViewBikeName;
         Button buttonReserveBike;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageViewBike = itemView.findViewById(R.id.imageViewBike);
-            textViewBikeType = itemView.findViewById(R.id.textViewBikeType);
+            textViewBikeName = itemView.findViewById(R.id.textViewBikeName);
             buttonReserveBike = itemView.findViewById(R.id.buttonReserveBike);
         }
+    }
+
+    public interface OnBikeReservedListener {
+        void onBikeReserved(Bike bike); // Expecting a Bike object here as well
     }
 }
