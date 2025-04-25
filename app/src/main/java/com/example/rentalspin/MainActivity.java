@@ -1,14 +1,18 @@
-// In your MainActivity.java
+package com.example.rentalspin;
 
+import android.os.Bundle;
+import android.view.MenuItem;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentTransaction;
-
-import android.os.Bundle;
-import android.view.MenuItem;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -17,44 +21,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private NavigationView navView;
     private Toolbar toolbar;
+    private NavController navController;
+    private AppBarConfiguration appBarConfiguration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toolbar = findViewById(R.id.toolbar); // Make sure you have a Toolbar with this ID in your app_bar_main.xml
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawerLayout = findViewById(R.id.drawerLayout);
         navView = findViewById(R.id.navView);
+
+        // Initialize NavController using the ID of the FragmentContainerView
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main); // Use the correct ID here
+
+        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph())
+                .setOpenableLayout(drawerLayout)
+                .build();
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(navView, navController);
         navView.setNavigationItemSelectedListener(this);
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Set the HomeFragment as the default fragment
-        if (savedInstanceState == null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_container, new HomeFragment()); // Replace R.id.fragment_container with your container ID
-            ft.commit();
-            navView.setCheckedItem(R.id.nav_home);
-        }
+        // Set the HomeFragment as the default destination is now handled by the nav_graph
+        // You can remove this manual navigation here if HomeFragment is set as the start destination in nav_graph.xml
+        // if (savedInstanceState == null) {
+        //     navController.navigate(R.id.nav_home);
+        //     navView.setCheckedItem(R.id.nav_home);
+        // }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-
-        if (item.getItemId() == R.id.nav_home) {
-            ft.replace(R.id.fragment_container, new HomeFragment());
-        } else if (item.getItemId() == R.id.nav_reservations) {
-            ft.replace(R.id.fragment_container, new MyReservationsFragment());
-        }
-
-        ft.commit();
+        // Use NavigationUI to handle navigation
+        NavigationUI.onNavDestinationSelected(item, navController);
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
