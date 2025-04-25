@@ -8,7 +8,7 @@ public class Reservation {
     private long reservationEndTime; // Optional
     private String stationName;
 
-    // Constructors, Getters, and Setters
+    // Constructors
     public Reservation() {
     }
 
@@ -45,12 +45,28 @@ public class Reservation {
         return stationName;
     }
 
-    // Setters (if needed)
+    // Setters
     public void setId(int id) {
         this.id = id;
     }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setBikeId(String bikeId) {
+        this.bikeId = bikeId;
+    }
+
+    public void setReservationStartTime(long reservationStartTime) {
+        this.reservationStartTime = reservationStartTime;
+    }
+
     public void setReservationEndTime(long reservationEndTime) {
         this.reservationEndTime = reservationEndTime;
+    }
+
+    public void setStationName(String stationName) {
+        this.stationName = stationName;
     }
 }
