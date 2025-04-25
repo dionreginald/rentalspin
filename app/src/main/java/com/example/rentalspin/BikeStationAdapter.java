@@ -7,19 +7,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class BikeStationAdapter extends RecyclerView.Adapter<BikeStationAdapter.ViewHolder> {
 
     private List<BikeStation> bikeStations;
-    private StationBikeAdapter.OnBikeReservedListener onBikeReservedListener;
+    private OnBikeReservedListener onBikeReservedListener;
 
     public BikeStationAdapter(List<BikeStation> bikeStations) {
         this.bikeStations = bikeStations;
     }
 
-    public void setOnBikeReservedListener(StationBikeAdapter.OnBikeReservedListener listener) {
+    public void setOnBikeReservedListener(OnBikeReservedListener listener) {
         this.onBikeReservedListener = listener;
     }
 
@@ -43,12 +42,14 @@ public class BikeStationAdapter extends RecyclerView.Adapter<BikeStationAdapter.
 
         List<Bike> bikes = station.getBikes();
         if (bikes != null && !bikes.isEmpty()) {
-            // Set up the nested RecyclerView for individual bikes (HORIZONTAL)
             LinearLayoutManager layoutManager = new LinearLayoutManager(holder.recyclerViewStationBikes.getContext(), LinearLayoutManager.HORIZONTAL, false);
             holder.recyclerViewStationBikes.setLayoutManager(layoutManager);
-            // Pass the context and the listener
             StationBikeAdapter stationBikeAdapter = new StationBikeAdapter(holder.recyclerViewStationBikes.getContext(), bikes);
-            stationBikeAdapter.setOnBikeReservedListener(onBikeReservedListener);
+            stationBikeAdapter.setOnBikeReservedListener(reservedBike -> {
+                if (onBikeReservedListener != null) {
+                    onBikeReservedListener.onBikeReserved(reservedBike);
+                }
+            });
             holder.recyclerViewStationBikes.setAdapter(stationBikeAdapter);
             holder.recyclerViewStationBikes.setVisibility(View.VISIBLE);
         } else {
@@ -70,5 +71,9 @@ public class BikeStationAdapter extends RecyclerView.Adapter<BikeStationAdapter.
             textViewName = itemView.findViewById(R.id.textViewStationName);
             recyclerViewStationBikes = itemView.findViewById(R.id.recyclerViewStationBikes);
         }
+    }
+
+    public interface OnBikeReservedListener {
+        void onBikeReserved(Bike bike);
     }
 }
