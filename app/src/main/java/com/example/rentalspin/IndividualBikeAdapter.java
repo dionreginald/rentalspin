@@ -37,14 +37,27 @@ public class IndividualBikeAdapter extends RecyclerView.Adapter<IndividualBikeAd
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Bike bike = bikes.get(position);
-        holder.textViewBikeType.setText(bike.getType() + " Bike");
-        holder.textViewStationName.setText("at " + bike.getStationName());
+
+        // Ensure your Bike class has getType() and getLocation() methods
+        if (bike.getType() != null) {
+            holder.textViewBikeType.setText(bike.getType() + " Bike");
+        } else {
+            holder.textViewBikeType.setText("Bike Type Unavailable");
+        }
+
+        if (bike.getStationName() != null) {
+            holder.textViewStationName.setText("at " + bike.getStationName());
+        } else {
+            holder.textViewStationName.setText("Station Name Unavailable");
+        }
 
         if (userLocation != null && bike.getLocation() != null) {
             float distance = userLocation.distanceTo(bike.getLocation()) / 1000; // Convert to kilometers
             holder.textViewDistance.setText(String.format(Locale.getDefault(), "%.2f km away", distance));
         } else {
             holder.textViewDistance.setText("Distance unavailable");
+            // Optional: You could check if location permissions are granted here
+            // and display a more informative message if not.
         }
     }
 
@@ -65,4 +78,6 @@ public class IndividualBikeAdapter extends RecyclerView.Adapter<IndividualBikeAd
             textViewStationName = itemView.findViewById(R.id.textViewStationName);
         }
     }
+
+    // Optional: Add an OnItemClickListener interface and implementation here if needed.
 }
