@@ -3,26 +3,49 @@ package com.example.rentalspin;
 import android.location.Location;
 
 public class Bike {
-    private String id; // Unique ID for the bike
-    private String type; // Type of bike (e.g., "Standard", "Electric", "Cruiser")
-    private Location location; // Latitude and longitude of the bike
-    private String stationName; // Name of the station the bike belongs to
-    private int imageResourceId; // Resource ID for the bike's image
-    private String name; // Name of the bike (e.g., "City Rider", "Power Surge")
-    private boolean isReserved; // Flag to indicate if the bike is reserved
+    private String id;
+    private String type;
+    private boolean isReserved;
+    private String stationName;
+    private int imageResourceId;
+    private String name;
+    private Location location; // Add this field
 
-    public Bike(String id, String type, double latitude, double longitude, String stationName, int imageResourceId, String name) {
+    // Existing constructor
+    public Bike(String id, String type, boolean isReserved, String stationName, int imageResourceId, String name) {
         this.id = id;
         this.type = type;
-        this.location = new Location("");
-        this.location.setLatitude(latitude);
-        this.location.setLongitude(longitude);
+        this.isReserved = isReserved;
         this.stationName = stationName;
         this.imageResourceId = imageResourceId;
         this.name = name;
-        this.isReserved = false; // Initially, all bikes are not reserved
+        this.location = null; // Initialize location, you'll set it later
     }
 
+    // New constructor that includes location
+    public Bike(String id, String type, boolean isReserved, String stationName, int imageResourceId, String name, double latitude, double longitude) {
+        this.id = id;
+        this.type = type;
+        this.isReserved = isReserved;
+        this.stationName = stationName;
+        this.imageResourceId = imageResourceId;
+        this.name = name;
+        this.location = new Location(""); // Empty provider
+        this.location.setLatitude(latitude);
+        this.location.setLongitude(longitude);
+    }
+
+    // Getter for the location
+    public Location getLocation() {
+        return location;
+    }
+
+    // Setter for the location (optional, if you need to update it later)
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    // Existing getters and setters...
     public String getId() {
         return id;
     }
@@ -31,8 +54,12 @@ public class Bike {
         return type;
     }
 
-    public Location getLocation() {
-        return location;
+    public boolean isReserved() {
+        return isReserved;
+    }
+
+    public void setReserved(boolean reserved) {
+        isReserved = reserved;
     }
 
     public String getStationName() {
@@ -46,14 +73,4 @@ public class Bike {
     public String getName() {
         return name;
     }
-
-    public boolean isReserved() {
-        return isReserved;
-    }
-
-    public void setReserved(boolean reserved) {
-        isReserved = reserved;
-    }
-
-    // You might want to add setters for other properties if they can change
 }
