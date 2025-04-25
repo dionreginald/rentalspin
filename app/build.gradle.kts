@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("androidx.navigation.safeargs")
 }
 
 android {
@@ -32,16 +33,28 @@ android {
 }
 
 dependencies {
-
+    // If you have libs.versions.toml
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    // Or replace above with direct versions like:
+    // implementation("androidx.appcompat:appcompat:1.6.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation ("com.airbnb.android:lottie:6.4.1")
+
+    implementation("com.airbnb.android:lottie:6.4.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.7")
+
+    implementation("com.squareup.okhttp3:okhttp:4.10.0") {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-daemon-client")
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-daemon-embeddable")
+    }
+
+    implementation("com.google.dagger:dagger:2.44")
+    implementation("jakarta.activation:jakarta.activation-api:1.2.1")
 }
